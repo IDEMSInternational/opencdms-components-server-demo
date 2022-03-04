@@ -18,6 +18,7 @@ def status_check():
 
 
 @app.get("/exec")
+# Test execution of base-64 encoded python code with sample string
 def exec_test():
     # Function as string to be executed (converted via https://www.base64decode.org/ )
     code_b64 = "ZGVmIG1haW4oKToKICAgIHJldHVybiAiVGVzdCBzdWNjZXNzZnVsIg=="
@@ -26,17 +27,18 @@ def exec_test():
 
 
 @ app.post("/exec")
+# Execute base-64 encoded python code from request
 def exec_post(py_code_b64: str, fn_name='main'):
     res = exec_code(py_code_b64, fn_name)
     return res
 
 
 def exec_code(code_b64: str, fn_name='main'):
+    # Decode b64 code, write to file, dynamically import, execute code
+    # delete file and return execution result
     task_id = uuid4()
-
     mod_path = f"app/modules/{task_id}.py"
     code = b64decode(code_b64).decode('utf-8')
-    # Write function to module file
     with open(mod_path, "w") as file:
         file.write(code)
 

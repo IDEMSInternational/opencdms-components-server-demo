@@ -1,5 +1,7 @@
 # OpenCDMS Component Server Demo
 
+This is a small proof-of-concept API that receives requests for python code to execute and runs them, returning the result
+
 ## Pre-Requisites
 
 The documentation requires python to be installed:  
