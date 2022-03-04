@@ -1,0 +1,23 @@
+FROM python:3.10
+
+# Setup virtual environment
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+WORKDIR /code
+
+# Install app dependencies and install
+COPY ./requirements.txt /code/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+
+# Download and install 3rd party libs (TODO - include in requirements once published instead)
+# NOTE - as docker caches this step will need to change dockerfile when updated to clear cache
+# RUN git clone --depth=1 https://github.com/opencdms/opencdms-process.git libs/opencdms-process
+# RUN cd libs/opencdms-process && pip install --no-cache-dir --upgrade -r /code/requirements.txt
+
+# Copy app code
+COPY ./app /code/app
+
+# Run app
+# CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
