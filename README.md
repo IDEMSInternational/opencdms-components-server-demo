@@ -45,6 +45,8 @@ Once installed, subsequent server starts can skip installation steps
 
 The server will start at [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
+Interactive docs available at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
 ## Running in Docker
 
 ### Build
