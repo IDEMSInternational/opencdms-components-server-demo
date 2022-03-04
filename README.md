@@ -55,4 +55,4 @@ docker build -f DOCKERFILE --tag idems/opencdms-components-api:1.0.0 .
 
 ### Docker Run (interactive)
 
-docker run -i --rm -p 8000:8000 idems/opencdms-components-api:1.0.0
+docker run -i --rm -p 80:80 idems/opencdms-components-api:1.0.0
