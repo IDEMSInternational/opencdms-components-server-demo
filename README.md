@@ -27,6 +27,34 @@ The scripts below will create a python [virtual environment](https://docs.python
     pip install -r requirements.txt
     ```
 
+## R installation
+
+The server requires R to be installed. Instructions for installing R can be found at [https://cran.r-project.org/](https://cran.r-project.org/).
+Extra guidance for installing R on Ubuntu 20.04 can be found at [https://www.digitalocean.com/community/tutorials/how-to-install-r-on-ubuntu-20-04](https://www.digitalocean.com/community/tutorials/how-to-install-r-on-ubuntu-20-04).
+The server has been tested with 'R version 4.1.2 (2021-11-01) -- "Bird Hippie"'.
+
+When R is installed start R:
+
+=== "Windows (powershell)"
+
+``` ps1
+TODO add instruction to get an R prompt. I think it is just 'R' but a path may need to be set.
+```
+
+=== "Linux (bash)"
+
+```sh
+sudo -i R
+```
+
+from the R prompt, install the `cdms.products` package, and then exit the R prompt.
+
+```
+install.packages('devtools')
+devtools::install_github("IDEMSInternational/cdms.products")
+q()
+```
+
 ## Running locally
 
 Once installed, subsequent server starts can skip installation steps
