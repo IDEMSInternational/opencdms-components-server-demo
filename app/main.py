@@ -16,6 +16,33 @@ from rinstat import cdms_products
 WORKING_DIR = os.path.dirname(__file__)
 
 
+class ClimaticSummaryParams(BaseModel):
+    data: str
+    date_time: str
+    station: str = None
+    elements: List = []
+    year: str = None
+    month: str = None
+    dekad: str = None  # TODO add type
+    pentad: str = None  # TODO add type
+    to: str = "hourly"
+    by: str = None  # TODO add type
+    doy: str = None
+    doy_first: int = 1
+    doy_last: int = 366
+    summaries: Dict = {"n": "dplyr::n"}
+    na_rm: bool = False
+    na_prop: int = None
+    na_n: int = None
+    na_consec: int = None
+    na_n_non: int = None
+    first_date: bool = False
+    n_dates: bool = False
+    last_date: bool = False
+    summaries_params: List = []
+    names: str = "{.fn}_{.col}"
+
+
 class InventoryTableParams(BaseModel):
     data: str
     date_time: str
@@ -41,7 +68,7 @@ class TimeseriesPlotParams(BaseModel):
     add_path: bool = False
     add_step: bool = False
     na_rm: bool = False
-    show_legend: bool = None # Convert None to R NA
+    show_legend: bool = None  # Convert None to R NA
     title: str = "Timeseries Plot"
     x_title: str = None
     y_title: str = None
@@ -51,6 +78,48 @@ app = FastAPI(
     title="OpenCDMS Components Api",
     version="1.0.0",
 )
+
+
+@app.post("/cdms_products")
+def climatic_summary(params: ClimaticSummaryParams) -> str:
+
+    data_file: str = os.path.join(WORKING_DIR, "rinstat/data", "daily_niger.csv")
+    data = read_csv(
+        data_file,
+        parse_dates=["date"],
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    df = cdms_products.climatic_summary(
+        data=data,
+        date_time=params.date_time,
+        station=params.station,
+        elements=params.elements,
+        year=params.year,
+        month=params.month,
+        dekad=params.dekad,
+        pentad=params.pentad,
+        to=params.to,
+        by=params.by,
+        doy=params.doy,
+        doy_first=params.doy_first,
+        doy_last=params.doy_last,
+        summaries=params.summaries,
+        na_rm=params.na_rm,
+        na_prop=params.na_prop,
+        na_n=params.na_n,
+        na_consec=params.na_consec,
+        na_n_non=params.na_n_non,
+        first_date=params.first_date,
+        n_dates=params.n_dates,
+        last_date=params.last_date,
+        summaries_params=params.summaries_params,
+        names=params.names,
+    )
+
+    df_json: str = df.to_json()
+    return df_json
 
 
 @app.post("/inventory_table")
