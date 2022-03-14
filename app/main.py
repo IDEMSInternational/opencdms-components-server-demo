@@ -1,17 +1,19 @@
 import importlib
 import os
 from base64 import b64decode
+from cmath import nan
 from typing import Dict, List, Optional
 from uuid import uuid4
 
 import uvicorn  # needed for debugging, see https://fastapi.tiangolo.com/tutorial/debugging/
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from pandas import DataFrame, read_csv
 from pydantic import BaseModel, MissingDiscriminator
 
 from rinstat import cdms_products
 
-TEST_DIR = os.path.dirname(__file__)
+WORKING_DIR = os.path.dirname(__file__)
 
 
 class InventoryTableParams(BaseModel):
@@ -26,6 +28,25 @@ class InventoryTableParams(BaseModel):
     observed_indicator: str = "X"
 
 
+class TimeseriesPlotParams(BaseModel):
+    data: str
+    date_time: str
+    elements: str
+    station: str = None
+    facet_by: str = "stations"
+    type: str = "line"
+    add_points: bool = False
+    add_line_of_best_fit: bool = False
+    se: bool = True
+    add_path: bool = False
+    add_step: bool = False
+    na_rm: bool = False
+    show_legend: bool = None # Convert None to R NA
+    title: str = "Timeseries Plot"
+    x_title: str = None
+    y_title: str = None
+
+
 app = FastAPI(
     title="OpenCDMS Components Api",
     version="1.0.0",
@@ -33,9 +54,9 @@ app = FastAPI(
 
 
 @app.post("/inventory_table")
-def inventory_table(params: InventoryTableParams) -> DataFrame:
+def inventory_table(params: InventoryTableParams) -> str:
 
-    data_file: str = os.path.join(TEST_DIR, "rinstat/data", "daily_niger.csv")
+    data_file: str = os.path.join(WORKING_DIR, "rinstat/data", "daily_niger.csv")
     data = read_csv(
         data_file,
         parse_dates=["date"],
@@ -57,6 +78,45 @@ def inventory_table(params: InventoryTableParams) -> DataFrame:
 
     df_json: str = df.to_json()
     return df_json
+
+
+@app.post("/timeseries_plot", response_class=FileResponse)
+def timeseries_plot(params: TimeseriesPlotParams) -> str:
+
+    data_file: str = os.path.join(WORKING_DIR, "rinstat/data", "daily_niger.csv")
+    data = read_csv(
+        data_file,
+        parse_dates=["date"],
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    output_path: str = os.path.join(WORKING_DIR, "rinstat/tmp")
+    output_file_name: str = "timeseries_plot.jpg"
+
+    return_val = cdms_products.timeseries_plot(
+        path=output_path,
+        file_name=output_file_name,
+        data=data,
+        date_time=params.date_time,
+        elements=params.elements,
+        station=params.station,
+        facet_by=params.facet_by,
+        type=params.type,
+        add_points=params.add_points,
+        add_line_of_best_fit=params.add_line_of_best_fit,
+        se=params.se,
+        add_path=params.add_path,
+        add_step=params.add_step,
+        na_rm=params.na_rm,
+        show_legend=params.show_legend,
+        title=params.title,
+        x_title=params.x_title,
+        y_title=params.y_title,
+    )
+
+    return_path: str = os.path.join(output_path, output_file_name)
+    return FileResponse(return_path)
 
 
 @app.get("/")
