@@ -80,7 +80,7 @@ app = FastAPI(
 )
 
 
-@app.post("/cdms_products")
+@app.post("/climatic_summary")
 def climatic_summary(params: ClimaticSummaryParams) -> str:
 
     data_file: str = os.path.join(WORKING_DIR, "rinstat/data", "daily_niger.csv")
