@@ -1,5 +1,6 @@
 import importlib
 import os
+from pathlib import Path
 from base64 import b64decode
 from cmath import nan
 from typing import Dict, List, Optional
@@ -13,7 +14,14 @@ from pydantic import BaseModel, MissingDiscriminator
 
 from rinstat import cdms_products
 
+
 WORKING_DIR = os.path.dirname(__file__)
+ROOT_DIR = Path(WORKING_DIR).parent
+MOCK_DATA_DIR = os.path.join(ROOT_DIR, "test")
+TMP_DIR = os.path.join(ROOT_DIR, 'tmp')
+
+if not os.path.exists(TMP_DIR):
+    os.mkdir(TMP_DIR)
 
 
 class ClimaticSummaryParams(BaseModel):
@@ -83,7 +91,7 @@ app = FastAPI(
 @app.post("/climatic_summary")
 def climatic_summary(params: ClimaticSummaryParams) -> str:
 
-    data_file: str = os.path.join(WORKING_DIR, "rinstat/data", "daily_niger.csv")
+    data_file: str = os.path.join(MOCK_DATA_DIR, "data.csv")
     data = read_csv(
         data_file,
         parse_dates=["date"],
@@ -125,7 +133,7 @@ def climatic_summary(params: ClimaticSummaryParams) -> str:
 @app.post("/inventory_table")
 def inventory_table(params: InventoryTableParams) -> str:
 
-    data_file: str = os.path.join(WORKING_DIR, "rinstat/data", "daily_niger.csv")
+    data_file: str = os.path.join(MOCK_DATA_DIR, "data.csv")
     data = read_csv(
         data_file,
         parse_dates=["date"],
@@ -152,7 +160,7 @@ def inventory_table(params: InventoryTableParams) -> str:
 @app.post("/timeseries_plot", response_class=FileResponse)
 def timeseries_plot(params: TimeseriesPlotParams) -> str:
 
-    data_file: str = os.path.join(WORKING_DIR, "rinstat/data", "daily_niger.csv")
+    data_file: str = os.path.join(MOCK_DATA_DIR, "data.csv")
     data = read_csv(
         data_file,
         parse_dates=["date"],
@@ -160,7 +168,7 @@ def timeseries_plot(params: TimeseriesPlotParams) -> str:
         na_values="NA",
     )
 
-    output_path: str = os.path.join(WORKING_DIR, "rinstat/tmp")
+    output_path: str = TMP_DIR
     output_file_name: str = "timeseries_plot.jpg"
 
     return_val = cdms_products.timeseries_plot(
