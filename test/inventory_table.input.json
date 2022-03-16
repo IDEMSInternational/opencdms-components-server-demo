@@ -1,0 +1,11 @@
+{
+  "data": "string",
+  "date_time": "date",
+  "elements": ["rain"],
+  "station": "station_name",
+  "year": "year",
+  "month": "month",
+  "day": "day",
+  "missing_indicator": "M",
+  "observed_indicator": "X"
+}

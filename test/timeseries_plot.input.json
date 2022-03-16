@@ -1,0 +1,18 @@
+{
+  "data": "string",
+  "date_time": "date",
+  "elements": "tmax",
+  "station": "station_name",
+  "facet_by": "stations",
+  "type": "line",
+  "add_points": false,
+  "add_line_of_best_fit": false,
+  "se": true,
+  "add_path": false,
+  "add_step": false,
+  "na_rm": false,
+  "show_legend": true,
+  "title": "Timeseries Plot",
+  "x_title": "string",
+  "y_title": "string"
+}
