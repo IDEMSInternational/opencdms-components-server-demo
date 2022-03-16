@@ -39,7 +39,7 @@ When R is installed start R:
 Additionally you will have to install r-tools:
 https://cran.r-project.org/bin/windows/Rtools/rtools40.html
 
-Once installed you can either call the R shell through the installed application, or add to path. Note - if adding to command line you may have to resolve conflict with in-built powershell `r` command (see https://stackoverflow.com/questions/50190995/trying-to-add-r-exe-to-the-path), or just call via `R.exe` or `Rscript`
+Once installed you will need to call R from an elevated shell (run as administrator)
 
 ```ps1
 Rscript install_packages.R
@@ -88,3 +88,12 @@ docker build -f DOCKERFILE --tag idems/opencdms-components-api:1.0.0 .
 ### Docker Run (interactive)
 
 docker run -i --rm -p 80:80 idems/opencdms-components-api:1.0.0
+
+## Troubleshooting
+
+### Windows
+
+**Cannot Run R Installation**
+Make sure you have added R to the environment path (as per installation documentation), and are running powershell (or the R program) as an administrator. You may also need to deactivate any active python environment.
+
+if you have added R to path environment variable and try to call directly you may have to resolve conflict with in-built powershell `r` command (see https://stackoverflow.com/questions/50190995/trying-to-add-r-exe-to-the-path), or just call via `R.exe` or `Rscript`
