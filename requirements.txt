@@ -1,7 +1,6 @@
 anyio==3.5.0
 asgiref==3.5.0
 autopep8==1.6.0
-backports.zoneinfo==0.2.1
 black==22.1.0
 cffi==1.15.0
 click==8.0.4
