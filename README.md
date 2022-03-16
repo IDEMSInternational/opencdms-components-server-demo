@@ -79,6 +79,8 @@ Interactive docs available at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000
 
 See [https://fastapi.tiangolo.com/tutorial/debugging/](https://fastapi.tiangolo.com/tutorial/debugging/)
 
+Note: There is currently a problem debugging in VS Code. This is because the debugger runs a specific file (main.py) and it imports relative from this file. Therefore it cannot find the `rinstat` module because the associated directory is one level higher than `main.py`. I tried specifying a relative import but this also did not work. I couldn't find a solution online so the workaround I am using is to have an app/rinstat directory temporarily while I'm debugging. There's probably a smarter way of doing this but this works for now. For a production server, we would likely publish `cdms_products` as a Python package, then this problem should disapear.
+
 ## Running in Docker
 
 ### Build
