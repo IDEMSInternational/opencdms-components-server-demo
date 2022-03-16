@@ -4,7 +4,7 @@ This is a small proof-of-concept API that receives requests for python code to e
 
 ## Pre-Requisites
 
-The documentation requires python to be installed:  
+The documentation requires python >=3.10 to be installed:  
 [https://www.python.org/downloads/](https://www.python.org/downloads/)
 
 ## Installation
@@ -27,6 +27,32 @@ The scripts below will create a python [virtual environment](https://docs.python
     pip install -r requirements.txt
     ```
 
+## R installation
+
+The server requires R to be installed. Instructions for installing R can be found at [https://cran.r-project.org/](https://cran.r-project.org/).
+Extra guidance for installing R on Ubuntu 20.04 can be found at [https://www.digitalocean.com/community/tutorials/how-to-install-r-on-ubuntu-20-04](https://www.digitalocean.com/community/tutorials/how-to-install-r-on-ubuntu-20-04).
+The server has been tested with 'R version 4.1.2 (2021-11-01) -- "Bird Hippie"'.
+
+When R is installed start R:
+
+=== "Windows (powershell)"
+Additionally you will have to install r-tools:
+https://cran.r-project.org/bin/windows/Rtools/rtools40.html
+
+Once installed you can either call the R shell through the installed application, or add to path. Note - if adding to command line you may have to resolve conflict with in-built powershell `r` command (see https://stackoverflow.com/questions/50190995/trying-to-add-r-exe-to-the-path), or just call via `R.exe` or `Rscript`
+
+```ps1
+Rscript install_packages.R
+```
+
+=== "Linux (bash)"
+from the R prompt, install the `cdms.products` package, and then exit the R prompt.
+
+```sh
+sudo -i R
+source("install_packages.R")
+```
+
 ## Running locally
 
 Once installed, subsequent server starts can skip installation steps
@@ -48,6 +74,10 @@ Once installed, subsequent server starts can skip installation steps
 The server will start at [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
 Interactive docs available at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+=== "Running in VS Code debugger"
+
+See [https://fastapi.tiangolo.com/tutorial/debugging/](https://fastapi.tiangolo.com/tutorial/debugging/)
 
 ## Running in Docker
 

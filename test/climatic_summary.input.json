@@ -1,0 +1,15 @@
+{
+  "data": "string",
+  "date_time": "date",
+  "station": "station_name",
+  "elements": ["rain"],
+  "year": "year",
+  "month": "month",
+  "to": "monthly",
+  "by": "station_name",
+  "summaries": {
+    "mean": "mean",
+    "st_dv": "sd",
+    "n_na": "naflex::na_n"
+  }
+}

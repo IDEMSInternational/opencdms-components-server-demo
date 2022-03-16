@@ -108,3 +108,6 @@ ENV/
 # Dynamically generated modules
 app/modules/*
 !app/modules/__init__.py
+
+.Rhistory
+tmp
