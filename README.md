@@ -4,7 +4,7 @@ This is a small proof-of-concept API that receives requests for python code to e
 
 ## Pre-Requisites
 
-The documentation requires python to be installed:  
+The documentation requires python >=3.10 to be installed:  
 [https://www.python.org/downloads/](https://www.python.org/downloads/)
 
 ## Installation
@@ -36,23 +36,21 @@ The server has been tested with 'R version 4.1.2 (2021-11-01) -- "Bird Hippie"'.
 When R is installed start R:
 
 === "Windows (powershell)"
+Additionally you will have to install r-tools:
+https://cran.r-project.org/bin/windows/Rtools/rtools40.html
 
-``` ps1
-TODO add instruction to get an R prompt. I think it is just 'R' but a path may need to be set.
+Once installed you can either call the R shell through the installed application, or add to path. Note - if adding to command line you may have to resolve conflict with in-built powershell `r` command (see https://stackoverflow.com/questions/50190995/trying-to-add-r-exe-to-the-path), or just call via `R.exe` or `Rscript`
+
+```ps1
+Rscript install_packages.R
 ```
 
 === "Linux (bash)"
+from the R prompt, install the `cdms.products` package, and then exit the R prompt.
 
 ```sh
 sudo -i R
-```
-
-from the R prompt, install the `cdms.products` package, and then exit the R prompt.
-
-```
-install.packages('devtools')
-devtools::install_github("IDEMSInternational/cdms.products")
-q()
+source("install_packages.R")
 ```
 
 ## Running locally
@@ -80,7 +78,6 @@ Interactive docs available at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000
 === "Running in VS Code debugger"
 
 See [https://fastapi.tiangolo.com/tutorial/debugging/](https://fastapi.tiangolo.com/tutorial/debugging/)
-
 
 ## Running in Docker
 
