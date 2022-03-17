@@ -10,6 +10,16 @@
       "request": "launch",
       "module": "uvicorn",
       "args": ["app.main:app", "--reload"]
+    },
+    {
+      "name": "Python: Current File",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      // Ensure python imports files from root folders
+      "env": { "PYTHONPATH": "${workspaceRoot}" }
     }
   ]
 }
