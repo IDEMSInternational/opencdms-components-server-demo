@@ -102,7 +102,9 @@ ENV/
 .mypy_cache/
 
 # IDE settings
-.vscode/
+.vscode/*
+!.vscode/launch.json
+!.vscode/extensions.json
 .idea/
 
 # Dynamically generated modules
