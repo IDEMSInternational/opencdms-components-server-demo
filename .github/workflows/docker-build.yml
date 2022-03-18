@@ -28,8 +28,8 @@ jobs:
         with:
           images: ${{ secrets.DOCKER_HUB_USERNAME }}/opencdms-components-server-demo
       - run: |
-          echo ${{steps.meta.outputs.tags}}
-          echo ${{steps.meta.outputs.labels}}
+          echo "${{steps.meta.outputs.tags}}"
+          echo "${{steps.meta.outputs.labels}}"
 
       - name: Build
         uses: docker/build-push-action@v2
