@@ -22,14 +22,12 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: ${{ secrets.DOCKER_HUB_USERNAME }}/opencdms-components-server-demo
-
-      - run: echo "${{steps.meta.outputs.tags}}"
-      - run: echo "${{steps.meta.outputs.labels}}"
+          images: idems/opencdms-components-server-demo
 
       - name: Build
         uses: docker/build-push-action@v2
