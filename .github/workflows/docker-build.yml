@@ -1,11 +1,14 @@
+# Create a docker image build on pull request
+# Links:
 # https://docs.docker.com/ci-cd/github-actions/
+# https://docs.github.com/en/actions/publishing-packages/publishing-docker-images
 
 name: docker_build
 
 on:
-  push:
+  pull_request:
     branches:
-      - "feat/docker-build-gh"
+      - main
 
 jobs:
   docker:
