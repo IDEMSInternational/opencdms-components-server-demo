@@ -1,5 +1,5 @@
 # Base image is Debian 11 (bullseye) with python installed
-FROM python:3.10-bullseye
+FROM python:3.8-bullseye
 
 # Install core dependencies for adding R and python dependencies
 RUN apt-get update && \
