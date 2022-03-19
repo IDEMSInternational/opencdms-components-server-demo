@@ -53,6 +53,21 @@ sudo -i R
 source("install_packages.R")
 ```
 
+## Test database installation
+
+The test database only needs to be installed if you plan to use the `test_data_api` endpoint.
+
+=== "Windows (powershell)"
+TODO
+
+=== "Linux (bash)"
+```sh
+cd ~
+mkdir opencdms
+cd opencdms
+git clone https://github.com/opencdms/opencdms-test-data.git
+```
+
 ## Running locally
 
 Once installed, subsequent server starts can skip installation steps

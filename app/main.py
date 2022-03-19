@@ -1,24 +1,24 @@
 import importlib
 import os
-from pathlib import Path
 from base64 import b64decode
 from cmath import nan
+from pathlib import Path
 from typing import Dict, List, Optional
 from uuid import uuid4
 
 import uvicorn  # needed for debugging, see https://fastapi.tiangolo.com/tutorial/debugging/
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
+from opencdms import MidasOpen
 from pandas import DataFrame, read_csv
 from pydantic import BaseModel, MissingDiscriminator
 
 from rinstat import cdms_products
 
-
 WORKING_DIR = os.path.dirname(__file__)
 ROOT_DIR = Path(WORKING_DIR).parent
 MOCK_DATA_DIR = os.path.join(ROOT_DIR, "test")
-TMP_DIR = os.path.join(ROOT_DIR, 'tmp')
+TMP_DIR = os.path.join(ROOT_DIR, "tmp")
 
 if not os.path.exists(TMP_DIR):
     os.mkdir(TMP_DIR)
@@ -86,6 +86,31 @@ app = FastAPI(
     title="OpenCDMS Components Api",
     version="1.0.0",
 )
+
+
+@app.post("/test_data_api")
+def test_data_api() -> str:
+
+    # Instead of using a database connection string, the MIDAS Open
+    # provider requires the root directory for the MIDAS Open data.
+    connection = os.path.join(
+        Path.home(), "opencdms", "opencdms-test-data", "opencdms_test_data", "data"
+    )
+
+    # All instances of CDMS Providers act as an active session
+    session = MidasOpen(connection)
+
+    filters = {
+        "src_id": 838,
+        "period": "hourly",
+        "year": 1991,
+        "elements": ["wind_speed", "wind_direction"],
+    }
+
+    # Get observations using filters
+    obs = session.obs(**filters)
+    obs_json: str = obs.to_json()
+    return obs_json
 
 
 @app.post("/climatic_summary")
