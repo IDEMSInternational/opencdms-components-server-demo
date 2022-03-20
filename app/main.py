@@ -1,3 +1,4 @@
+from datetime import datetime
 import importlib
 import os
 from base64 import b64decode
@@ -7,11 +8,15 @@ from typing import Dict, List, Optional
 from uuid import uuid4
 
 import uvicorn  # needed for debugging, see https://fastapi.tiangolo.com/tutorial/debugging/
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.responses import FileResponse
-from opencdms import MidasOpen
 from pandas import DataFrame, read_csv
-from pydantic import BaseModel, MissingDiscriminator
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+from sqlalchemy.orm import joinedload
+from app.db import get_session
+
+from opencdms.models.climsoft import v4_1_1_core as climsoft
 
 from rinstat import cdms_products
 
@@ -88,32 +93,36 @@ app = FastAPI(
 )
 
 
-@app.post("/test_data_api")
-def test_data_api() -> str:
-
-    # Instead of using a database connection string, the MIDAS Open
-    # provider requires the root directory for the MIDAS Open data.
-    connection = os.path.join(
-        Path.home(), "opencdms", "opencdms-test-data", "opencdms_test_data", "data"
-    )
-
-    # All instances of CDMS Providers act as an active session
-    session = MidasOpen(connection)
+@ app.post("/test_data_api")
+# Inject the session from generator
+def test_data_api(db_session: Session = Depends(get_session)) -> str:
 
     filters = {
-        "src_id": 838,
-        "period": "hourly",
-        "year": 1991,
-        "elements": ["wind_speed", "wind_direction"],
+        "station_id": '67774010',
+        "period_start": '1991-01-01',
+        "period_end": '1991-01-10',
+        # "elements": ["wind_speed", "wind_direction"],
     }
 
-    # Get observations using filters
-    obs = session.obs(**filters)
-    obs_json: str = obs.to_json()
-    return obs_json
+    obs = climsoft.Observationfinal
+    # Create date object in given time format yyyy-mm-dd
+    period_start_date = datetime.strptime(filters['period_start'], "%Y-%m-%d")
+    period_end_date = datetime.strptime(filters['period_end'], "%Y-%m-%d")
+
+    data = (
+        db_session.query(obs)
+        .filter_by(recordedFrom=filters["station_id"])
+        .filter(obs.obsDatetime >= period_start_date)
+        .filter(obs.obsDatetime <= period_end_date)
+        # .options(joinedload("obselement"), joinedload("station"))
+        .limit(100)  # Testing purposes to avoid large calls
+        .all()
+    )
+
+    return data
 
 
-@app.post("/climatic_summary")
+@ app.post("/climatic_summary")
 def climatic_summary(params: ClimaticSummaryParams) -> str:
 
     data_file: str = os.path.join(MOCK_DATA_DIR, "data.csv")
@@ -155,7 +164,7 @@ def climatic_summary(params: ClimaticSummaryParams) -> str:
     return df_json
 
 
-@app.post("/inventory_table")
+@ app.post("/inventory_table")
 def inventory_table(params: InventoryTableParams) -> str:
 
     data_file: str = os.path.join(MOCK_DATA_DIR, "data.csv")
@@ -182,7 +191,7 @@ def inventory_table(params: InventoryTableParams) -> str:
     return df_json
 
 
-@app.post("/timeseries_plot", response_class=FileResponse)
+@ app.post("/timeseries_plot", response_class=FileResponse)
 def timeseries_plot(params: TimeseriesPlotParams) -> str:
 
     data_file: str = os.path.join(MOCK_DATA_DIR, "data.csv")
@@ -221,12 +230,12 @@ def timeseries_plot(params: TimeseriesPlotParams) -> str:
     return FileResponse(return_path)
 
 
-@app.get("/")
+@ app.get("/")
 def status_check():
     return {"Status": "Running"}
 
 
-@app.get("/exec")
+@ app.get("/exec")
 # Test execution of base-64 encoded python code with sample string
 def exec_test():
     # Function as string to be executed (converted via https://www.base64decode.org/ )
@@ -235,7 +244,7 @@ def exec_test():
     return res
 
 
-@app.post("/exec")
+@ app.post("/exec")
 # Execute base-64 encoded python code from request
 def exec_post(py_code_b64: str, fn_name="main"):
     res = exec_code(py_code_b64, fn_name)

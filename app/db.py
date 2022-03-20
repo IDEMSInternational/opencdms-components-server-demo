@@ -1,5 +1,5 @@
 import os
-from sqlalchemy.orm import sessionmaker, scoped_session, Session
+from sqlalchemy.orm import sessionmaker,  Session
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -26,3 +26,11 @@ async def get_session() -> Session:
         yield session
     finally:
         session.close()
+
+# Alternatively data could be access via providers (as done in opencdms wrapper but assumed legacy)
+
+# from opencdms.provider.climsoft import Climsoft4Provider
+# from opencdms.provider.opencdms import OpenCDMSProvider, ProviderConfig
+
+# climsoft_provider = Climsoft4Provider()
+# stations = climsoft_provider.list(db_session, 'Station')
