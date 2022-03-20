@@ -97,7 +97,7 @@ def test_data_api() -> str:
         Path.home(), "opencdms", "opencdms-test-data", "opencdms_test_data", "data"
     )
 
-    # All instances of CDMS Providers act as an active session
+    # All instances of CDMS Providers act as an active  session
     session = MidasOpen(connection)
 
     filters = {
