@@ -55,17 +55,14 @@ sudo Rscript install_packages.R
 ## Test database installation
 
 The test database only needs to be installed if you plan to use the `test_data_api` endpoint.
-
-=== "Windows (powershell)"
-TODO
-
-=== "Linux (bash)"
+You will first need to configure the `.env` file to provide a database_uri
 
 ```sh
-cd ~
-mkdir opencdms
-cd opencdms
-git clone https://github.com/opencdms/opencdms-test-data.git
+cp .env.example .env
+```
+You will then need to either populate with an existing database endpoint, or run a local copy to connect to using the default uri. A docker template has been created to facilitate this, see notes in [test-data-server/REAMDE.md](test-data-server/README.md)
+```
+docker-compose --file test-data-server/docker-compose.yml up
 ```
 
 ## Running locally

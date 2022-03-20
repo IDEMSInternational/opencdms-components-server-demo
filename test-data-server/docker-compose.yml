@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  # A MariaDB 10.1 instance containing the climsoft-4.1.1 schema (comparable to how Climsoft is used in production)
+  climsoft-4.1.1:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.climsoft-4.1.1
+    container_name: climsoft-4.1.1
+    ports:
+      - "33308:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+
