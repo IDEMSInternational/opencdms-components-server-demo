@@ -101,20 +101,28 @@ def test_data_api(db_session: Session = Depends(get_session)) -> str:
         "station_id": '67774010',
         "period_start": '1991-01-01',
         "period_end": '1991-01-10',
+
+        # TODO - handle filtering by element
         # "elements": ["wind_speed", "wind_direction"],
     }
 
+    # Run queries against climsoft Observation final table
     obs = climsoft.Observationfinal
-    # Create date object in given time format yyyy-mm-dd
+
+    # Create date object in given time format yyyy-mm-dd for use in filters
     period_start_date = datetime.strptime(filters['period_start'], "%Y-%m-%d")
     period_end_date = datetime.strptime(filters['period_end'], "%Y-%m-%d")
 
     data = (
         db_session.query(obs)
+        # https://stackoverflow.com/questions/2128505/difference-between-filter-and-filter-by-in-sqlalchemy
         .filter_by(recordedFrom=filters["station_id"])
         .filter(obs.obsDatetime >= period_start_date)
         .filter(obs.obsDatetime <= period_end_date)
+
+        # TODO - handle any required data merging
         # .options(joinedload("obselement"), joinedload("station"))
+
         .limit(100)  # Testing purposes to avoid large calls
         .all()
     )
