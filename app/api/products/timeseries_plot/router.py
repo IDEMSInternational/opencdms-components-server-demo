@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import FileResponse
 from sqlalchemy.orm.session import Session
+from app.api.products.schema import ProductDataParams
 from app.api.products.timeseries_plot.schema import TimeseriesPlotParams
 from app.db import get_session
 from app.services.timeseries_plot import timeseries_plot_create
@@ -12,7 +13,7 @@ router = APIRouter()
 
 @ router.post("/", response_class=FileResponse)
 def create(
-    data_params,
+    data_params: ProductDataParams,
     product_params: TimeseriesPlotParams,
     db_session: Session = Depends(get_session),
 ):

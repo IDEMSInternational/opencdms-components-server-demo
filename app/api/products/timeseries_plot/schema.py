@@ -2,7 +2,6 @@ from pydantic import BaseModel
 
 
 class TimeseriesPlotParams(BaseModel):
-    data: str
     date_time: str
     elements: str
     station: str = None

@@ -3,7 +3,6 @@ from pydantic import BaseModel
 
 
 class ClimaticSummaryParams(BaseModel):
-    data: str
     date_time: str
     station: str = None
     elements: List = []

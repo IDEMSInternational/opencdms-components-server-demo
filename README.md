@@ -177,3 +177,6 @@ https://github.com/opencdms/opencdms-test-data
 
 - SQLAlchemy ORM (used for interrogating data)   
 https://www.sqlalchemy.org/
+
+- Pydantic (definining data models)
+https://pydantic-docs.helpmanual.io/

@@ -3,7 +3,6 @@ from pydantic import BaseModel
 
 
 class InventoryTableParams(BaseModel):
-    data: str
     date_time: str
     elements: List
     station: str = None
