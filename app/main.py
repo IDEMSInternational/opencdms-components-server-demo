@@ -17,8 +17,10 @@ from sqlalchemy.orm import joinedload
 from app.db import get_session
 
 from opencdms.models.climsoft import v4_1_1_core as climsoft
-
 from rinstat import cdms_products
+
+# Routers
+from app.api.products.climatic_summary import router as climatic_summary_router
 
 WORKING_DIR = os.path.dirname(__file__)
 ROOT_DIR = Path(WORKING_DIR).parent
@@ -27,33 +29,6 @@ TMP_DIR = os.path.join(ROOT_DIR, "tmp")
 
 if not os.path.exists(TMP_DIR):
     os.mkdir(TMP_DIR)
-
-
-class ClimaticSummaryParams(BaseModel):
-    data: str
-    date_time: str
-    station: str = None
-    elements: List = []
-    year: str = None
-    month: str = None
-    dekad: str = None  # TODO add type
-    pentad: str = None  # TODO add type
-    to: str = "hourly"
-    by: str = None  # TODO add type
-    doy: str = None
-    doy_first: int = 1
-    doy_last: int = 366
-    summaries: Dict = {"n": "dplyr::n"}
-    na_rm: bool = False
-    na_prop: int = None
-    na_n: int = None
-    na_consec: int = None
-    na_n_non: int = None
-    first_date: bool = False
-    n_dates: bool = False
-    last_date: bool = False
-    summaries_params: List = []
-    names: str = "{.fn}_{.col}"
 
 
 class InventoryTableParams(BaseModel):
@@ -92,6 +67,9 @@ app = FastAPI(
     version="1.0.0",
 )
 
+app.include_router(climatic_summary_router,
+                   prefix="/v1/products/climatic-summary", tags=["Climatic Summary"])
+
 
 @ app.post("/test_data_api")
 # Inject the session from generator
@@ -128,48 +106,6 @@ def test_data_api(db_session: Session = Depends(get_session)) -> str:
     )
 
     return data
-
-
-@ app.post("/climatic_summary")
-def climatic_summary(params: ClimaticSummaryParams) -> str:
-
-    data_file: str = os.path.join(MOCK_DATA_DIR, "data.csv")
-    data = read_csv(
-        data_file,
-        parse_dates=["date"],
-        dayfirst=True,
-        na_values="NA",
-    )
-
-    df = cdms_products.climatic_summary(
-        data=data,
-        date_time=params.date_time,
-        station=params.station,
-        elements=params.elements,
-        year=params.year,
-        month=params.month,
-        dekad=params.dekad,
-        pentad=params.pentad,
-        to=params.to,
-        by=params.by,
-        doy=params.doy,
-        doy_first=params.doy_first,
-        doy_last=params.doy_last,
-        summaries=params.summaries,
-        na_rm=params.na_rm,
-        na_prop=params.na_prop,
-        na_n=params.na_n,
-        na_consec=params.na_consec,
-        na_n_non=params.na_n_non,
-        first_date=params.first_date,
-        n_dates=params.n_dates,
-        last_date=params.last_date,
-        summaries_params=params.summaries_params,
-        names=params.names,
-    )
-
-    df_json: str = df.to_json()
-    return df_json
 
 
 @ app.post("/inventory_table")
