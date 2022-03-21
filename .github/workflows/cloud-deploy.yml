@@ -1,0 +1,57 @@
+# Build docker image and deploy to both dockerhub and google cloud
+
+
+name: cloud_deploy
+
+on:
+  push:
+    branches:
+      - feat/cloud-db-integration
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT }}
+  SERVICE: hello-cloud-run
+  REGION: us-central1
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: idems/opencdms-components-api
+
+      - name: Build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha, scope=${{ github.workflow }}
+          cache-to: type=gha, scope=${{ github.workflow }}, mode=max
+
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - # copy multiplatform image from dockerhub to quay and ghcr
+        name: Push Image to multiple registries
+        uses: akhilerm/tag-push-action@v2.0.0
+        with:
+          src: ${{ steps.meta.outputs.tags[0] }}
+          dst: gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{  github.sha }}
