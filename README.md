@@ -1,6 +1,6 @@
 # OpenCDMS Component Server Demo
 
-This is a small proof-of-concept API that receives requests for python code to execute and runs them, returning the result
+This is a small proof-of-concept designed to produce specific data-products from opencdms data
 
 ## Pre-Requisites
 
@@ -55,17 +55,14 @@ sudo Rscript install_packages.R
 ## Test database installation
 
 The test database only needs to be installed if you plan to use the `test_data_api` endpoint.
-
-=== "Windows (powershell)"
-TODO
-
-=== "Linux (bash)"
+You will first need to configure the `.env` file to provide a database_uri
 
 ```sh
-cd ~
-mkdir opencdms
-cd opencdms
-git clone https://github.com/opencdms/opencdms-test-data.git
+cp .env.example .env
+```
+You will then need to either populate with an existing database endpoint, or run a local copy to connect to using the default uri. A docker template has been created to facilitate this, see notes in [test-data-server/REAMDE.md](test-data-server/README.md)
+```
+docker-compose --file test-data-server/docker-compose.yml up
 ```
 
 ## Running locally
@@ -112,7 +109,7 @@ docker run -i --rm -p 80:80 idems/opencdms-components-api:1.0.0
 
 To run on python 3.10 the package `backports.zoneinfo` may need to be removed
 
-### Additional packages required
+### Additional packages (possibly) required
 https://pypi.org/project/mysqlclient/
 `sudo apt-get install python3-dev default-libmysqlclient-dev build-essential`
 
@@ -160,3 +157,18 @@ https://confluence.atlassian.com/bamkb/git-checkouts-fail-on-windows-with-filena
 https://stackoverflow.com/questions/51294268/pip-install-mysqlclient-returns-fatal-error-c1083-cannot-open-file-mysql-h
 
 https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2017
+
+
+## Useful Links
+
+- Climsoft API (whose methods these are loosely based on and may in the future be integrated with)   
+https://github.com/openclimateinitiative/climsoft-api
+
+- PyOpenCDMS python packages (used for linking to data)
+https://github.com/opencdms/pyopencdms
+
+- OpenCDMS test data repo (adapted to provide local testing capability)
+https://github.com/opencdms/opencdms-test-data
+
+- SQLAlchemy ORM (used for interrogating data)   
+https://www.sqlalchemy.org/
