@@ -1,8 +1,13 @@
+from pandas import DataFrame
 from app.api.products.climatic_summary.schema import ClimaticSummaryParams
 from rinstat import cdms_products
 
 
-def create(data, params: ClimaticSummaryParams) -> str:
+class FailedCreatingClimaticSummary(Exception):
+    pass
+
+
+def climatic_summary_create(data: DataFrame, params: ClimaticSummaryParams) -> str:
 
     df = cdms_products.climatic_summary(
         data=data,

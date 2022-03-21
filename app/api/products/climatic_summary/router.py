@@ -1,30 +1,29 @@
 from fastapi import APIRouter, Depends
 from app.api.products.climatic_summary.schema import ClimaticSummaryParams
-from app.utils.response import get_success_response
-from climsoft_api.services import observationfinal_service
-import climsoft_api.api.observationfinal.schema as observationfinal_schema
 from sqlalchemy.orm.session import Session
-from climsoft_api.api import deps
+from app.db import get_session
+from app.services.climatic_summary import FailedCreatingClimaticSummary, climatic_summary_create
+from app.utils.product_data import generateProductData
+from app.utils.response import get_error_response, get_success_response
+from rinstat.cdms_products import climatic_summary
 
 
 router = APIRouter()
 
 
-@router.post(
-    "/",
-    # response_model=observationfinal_schema.ObservationFinalResponse,
-)
-def create_climatic_summary(
+@router.post("/")
+def create(
     data_params,
     product_params: ClimaticSummaryParams,
-    db_session: Session = Depends(deps.get_session),
+    db_session: Session = Depends(get_session),
 ):
-    try:
+    print("Create climatic summary", data_params)
+    data = generateProductData(data_params, db_session)
 
+    try:
         return get_success_response(
-            result=[observationfinal_service.create(
-                db_session=db_session, data=data)],
+            result=climatic_summary_create(data, product_params),
             message="Successfully created observation_final.",
         )
-    except observationfinal_service.FailedCreatingObservationFinal as e:
+    except FailedCreatingClimaticSummary as e:
         return get_error_response(message=str(e))
