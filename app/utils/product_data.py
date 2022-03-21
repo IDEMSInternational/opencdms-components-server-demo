@@ -29,15 +29,9 @@ def generateProductData(data_params: ProductDataParams, db_session: Session) -> 
 
     data = (
         db_session.query(obs)
-        # https://stackoverflow.com/questions/2128505/difference-between-filter-and-filter-by-in-sqlalchemy
         .filter(obs.recordedFrom.in_(data_params.station_ids))
         .filter(obs.obsDatetime.between(period_start_date, period_end_date))
         .filter(obs.describedBy.in_(data_params.elements))
-
-        # TODO - handle any required data merging
-        # .options(joinedload("obselement"), joinedload("station"))
-
-        .limit(100)  # Testing purposes to avoid large calls
         .all()
     )
 

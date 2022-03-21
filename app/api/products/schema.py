@@ -14,6 +14,6 @@ class Response(BaseSchema):
 
 
 class ProductDataParams(BaseModel):
-    station_ids: List[int] = [67774010]
-    period: List[str] = ['1900-01-01', '2022-01-01']
-    elements: List[int] = [3, 4]
+    station_ids: List[int] = [67774010, 67963040]
+    period: List[str] = ['2000-01-01', '2000-03-01']
+    elements: List[int] = [2, 4]
