@@ -33,11 +33,6 @@ jobs:
         with:
           images: idems/opencdms-components-api
 
-      # convert base_64 credentials
-      - run: echo $GCP_SA_KEY_B64 | base64 --decode >> credentials.json
-        env:
-          GCP_SA_KEY_B64: ${{secrets.GCP_SA_KEY_B64}}
-
       # authenticate to google cloud
       - id: "auth"
         uses: "google-github-actions/auth@v0"
@@ -49,7 +44,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: $IMAGE_NAME
+          tags: ${{github.env.IMAGE_NAME}}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha, scope=${{ github.workflow }}
           cache-to: type=gha, scope=${{ github.workflow }}, mode=max
