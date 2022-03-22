@@ -6,7 +6,11 @@ on:
     branches:
       - feat/deploy-gh-action
 env:
+  REGISTRY: europe-west1-docker.pkg.dev
+  REGISTRY_PATH: ${{ secrets.GCP_PROJECT }}/opencdms-components-api
+  GCP_REGION: europe-west1
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
+  SERVICE_NAME: opencdms-components-api
   SERVICE: opencdms-components-api
   REGION: europe-west1
   IMAGE_NAME: ${{ secrets.GCP_PROJECT }}/opencdms-components-api
@@ -14,6 +18,11 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # https://github.com/docker/build-push-action/issues/171
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -37,11 +46,11 @@ jobs:
       # https://github.com/google-github-actions/auth#authenticating-via-service-account-key-json
       # https://cloud.google.com/artifact-registry/docs/access-control
 
-      - id: "auth"
-        uses: "google-github-actions/auth@v0"
-        with:
-          credentials_json: ${{secrets.GCP_SA_KEY_B64}}
-          token_format: "access_token"
+      # - id: "auth"
+      #   uses: "google-github-actions/auth@v0"
+      #   with:
+      #     credentials_json: ${{secrets.GCP_SA_KEY_B64}}
+      #     token_format: "access_token"
 
       # - name: Authorize Docker push
       #   run: gcloud auth configure-docker
@@ -49,23 +58,32 @@ jobs:
       # https://github.com/google-github-actions/auth#authenticating-via-service-account-key-json
       # https://github.com/docker/login-action#google-container-registry-gcr
 
+      # This example runs "docker login" directly to Artifact Registry.
+      # - run: |
+      #     echo '${{ steps.auth.outputs.access_token }}' | docker login -u oauth2accesstoken --password-stdin https://${{env.REGION}}-docker.pkg.dev
+
       - name: Login to GCR
         uses: docker/login-action@v1
         with:
-          registry: "${{env.REGION}}-docker.pkg.dev"
-          username: "oauth2accesstoken"
-          password: "${{ steps.auth.outputs.access_token }}"
+          registry: ${{ env.REGISTRY }}
+          username: _json_key_base64
+          password: ${{ secrets.GCP_SA_KEY_B64 }}
 
-      # This example runs "docker login" directly to Artifact Registry.
-      - run: |
-          echo '${{ steps.auth.outputs.access_token }}' | docker login -u oauth2accesstoken --password-stdin https://${{env.REGION}}-docker.pkg.dev
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.REGISTRY_PATH }}/${{ env.SERVICE_NAME }}
+
       - name: Build
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: ${{env.REGION}}-docker.pkg.dev/${{env.IMAGE_NAME}}:${{  github.sha }}
-          # labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha, scope=${{ github.workflow }}
           cache-to: type=gha, scope=${{ github.workflow }}, mode=max
 
