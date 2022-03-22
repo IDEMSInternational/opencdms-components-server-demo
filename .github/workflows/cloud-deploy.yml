@@ -1,19 +1,25 @@
 # Build docker image and deploy to google cloud run
+
+# Note - while a similar build/deploy pipeline can be triggered directly from google cloud builder and run
+# this github action provides more flexibility for customising build variables, deployment targets,
+# tags, and build time resources
+
+# In order to run secrets will need to be provided for:
+# GCP_PROJECT - id of project from where google cloud run will be deployed
+# GCP_SA_KEY_B64 - base64 encoded service account with sufficient permissions for deploying (see various links throughout)
+# DATABASE_URI - connection string to manage connection to live database (same as in local .env file)
+
 name: cloud_deploy
 
 on:
   push:
     branches:
-      - feat/deploy-gh-action
+      - main
 env:
   REGISTRY: europe-west1-docker.pkg.dev
-
   REGION: europe-west1
-
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
-
   SERVICE_NAME: opencdms-components-api
-
   REGISTRY_PATH: ${{ secrets.GCP_PROJECT }}/opencdms-components-api
 
 jobs:
@@ -41,9 +47,8 @@ jobs:
           credentials_json: ${{secrets.GCP_SA_KEY_B64}}
           token_format: "access_token"
 
-        # TODO - could gcloud auth and pass as token
-
-      - name: Login to GCR
+      # Login to artifact repository using same credentials as above (could use output token instead of user/pass)
+      - name: Login to GAR
         uses: docker/login-action@v1
         with:
           registry: ${{ env.REGISTRY }}
