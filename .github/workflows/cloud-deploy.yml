@@ -34,7 +34,7 @@ jobs:
           images: idems/opencdms-components-api
 
       # convert base_64 credentials
-      - run: echo "GCP_SA_KEY=$($GCP_SA_KEY_B64 | base64 --decode)" >> $GITHUB_ENV
+      - run: echo "GCP_SA_KEY=$(GCP_SA_KEY_B64 | base64 --decode)" >> $GITHUB_ENV
         env:
           GCP_SA_KEY_B64: ${{secrets.GCP_SA_KEY_B64}}
 
