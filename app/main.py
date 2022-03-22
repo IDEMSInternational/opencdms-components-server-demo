@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 # Routers
@@ -13,6 +14,15 @@ def get_app():
         title="OpenCDMS Components Api",
         version="1.0.0",
         docs_url="/"
+    )
+
+    # Development - include middleware to allow cross-origin-requests
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=['*'],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
     app.include_router(climatic_summary_router,
