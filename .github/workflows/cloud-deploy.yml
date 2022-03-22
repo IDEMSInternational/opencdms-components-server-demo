@@ -1,6 +1,4 @@
-# Build docker image and deploy to both dockerhub and google cloud
-
-
+# Build docker image and deploy to google cloud run
 name: cloud_deploy
 
 on:
@@ -36,10 +34,10 @@ jobs:
           images: idems/opencdms-components-api
 
       # authenticate to google cloud
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v0'
+      - id: "auth"
+        uses: "google-github-actions/auth@v0"
         with:
-          credentials_json: '${{ secrets.GCP_SA_KEY_B64 | base64 --decode }}'          
+          credentials_json: "${{ secrets.GCP_SA_KEY_B64 | base64 --decode }}"
 
       - name: Build
         uses: docker/build-push-action@v2
@@ -51,6 +49,5 @@ jobs:
           cache-from: type=gha, scope=${{ github.workflow }}
           cache-to: type=gha, scope=${{ github.workflow }}, mode=max
 
-
       - name: Deploy Docker image
-          run: gcloud run deploy ${{ secrets.GCP_PROJECT_ID }} --image $IMAGE_NAME --region us-central1 --platform managed
+        run: gcloud run deploy ${{ secrets.GCP_PROJECT_ID }} --image $IMAGE_NAME --region us-central1 --platform managed
