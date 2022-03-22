@@ -33,28 +33,38 @@ jobs:
         with:
           images: idems/opencdms-components-api
 
-      - name: Setup Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
+      # authenticate to google cloud
+      - id: "auth"
+        uses: "google-github-actions/auth@v0"
         with:
-          project_id: ${{ env.PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY_B64 }}
-          export_default_credentials: true # Set to true to authenticate the Cloud Run action
+          credentials_json: ${{secrets.GCP_SA_KEY_B64}}
 
-      - name: Authorize Docker push
-        run: gcloud auth configure-docker
+      # - name: Setup Cloud SDK
+      #   uses: google-github-actions/setup-gcloud@v0
+      #   # with:
+      #   #   project_id: ${{ env.PROJECT_ID }}
+      #   #   service_account_key: ${{ secrets.GCP_SA_KEY_B64 }}
+      #   #   export_default_credentials: true  # Set to true to authenticate the Cloud Run action
+
+      # - name: Authorize Docker push
+      #   run: gcloud auth configure-docker
+
+      - name: Login to GCR
+        uses: docker/login-action@v1
+        with:
+          registry: gcr.io
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
 
       - name: Build
         uses: docker/build-push-action@v2
         with:
           context: .
-          push: false
+          push: true
           tags: ${{env.IMAGE_NAME}}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha, scope=${{ github.workflow }}
           cache-to: type=gha, scope=${{ github.workflow }}, mode=max
-
-      - name: Push Container
-        run: docker push $IMAGE_NAME
 
       - name: Deploy to Cloud Run
         id: deploy
