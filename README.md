@@ -83,9 +83,8 @@ Once installed, subsequent server starts can skip installation steps
     uvicorn app.main:app --reload
     ```
 
-The server will start at [http://127.0.0.1:8000](http://127.0.0.1:8000)
+The server will start at [http://127.0.0.1:8000](http://127.0.0.1:8000) which will also host interactive documentation
 
-Interactive docs available at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
 === "Running in VS Code debugger"
 
@@ -104,6 +103,12 @@ docker run -i --rm -p 80:80 idems/opencdms-components-api:1.0.0
 ## Known Issues and Limitations
 
 ## Troubleshooting
+
+### Address already in use
+This can happen if multiple instances of server running, or one instance failed to close completely.
+Kill the process running on the port
+
+`sudo fuser -k 8000/tcp`
 
 ### Python 3.10
 
@@ -172,3 +177,6 @@ https://github.com/opencdms/opencdms-test-data
 
 - SQLAlchemy ORM (used for interrogating data)   
 https://www.sqlalchemy.org/
+
+- Pydantic (definining data models)
+https://pydantic-docs.helpmanual.io/
