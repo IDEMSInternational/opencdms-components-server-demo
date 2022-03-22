@@ -79,7 +79,7 @@ jobs:
         with:
           service: ${{ env.SERVICE_NAME }}
           # https://githubhot.com/repo/docker/build-push-action/issues/554
-          image: ${{ fromJSON(steps.build.outputs.Metadata.image.name)['image.name']}}
+          image: ${{ fromJSON(steps.build.outputs.Metadata)['image.name']}}
           region: ${{ env.REGION }}
 
       - name: Show Output
