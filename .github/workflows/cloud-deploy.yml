@@ -35,7 +35,7 @@ jobs:
 
       # convert base_64 credentials
       - run: echo "GCP_SA_KEY=$($GCP_SA_KEY_B64 | base64 --decode)" >> $GITHUB_ENV
-        with:
+        environment:
           GCP_SA_KEY_B64: ${{secrets.GCP_SA_KEY_B64}}
 
       # authenticate to google cloud
