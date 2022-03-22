@@ -34,11 +34,12 @@ jobs:
           images: idems/opencdms-components-api
 
       # authenticate to google cloud
-      - id: "auth"
-        uses: "google-github-actions/auth@v0"
-        with:
-          credentials_json: ${{secrets.GCP_SA_KEY_B64}}
-          token_format: "access_token"
+      # https://github.com/google-github-actions/auth#authenticating-via-service-account-key-json
+      # - id: "auth"
+      #   uses: "google-github-actions/auth@v0"
+      #   with:
+      #     credentials_json: ${{secrets.GCP_SA_KEY_B64}}
+      #     token_format: "access_token"
 
       # - name: Setup Cloud SDK
       #   uses: google-github-actions/setup-gcloud@v0
@@ -50,12 +51,13 @@ jobs:
       # - name: Authorize Docker push
       #   run: gcloud auth configure-docker
 
+      # https://github.com/docker/login-action#service-account-based-authentication
       - name: Login to GCR
         uses: docker/login-action@v1
         with:
           registry: gcr.io
-          username: oauth2accesstoken
-          password: ${{ steps.auth.outputs.access_token }}
+          username: _json_key_base64
+          password: ${{ secrets.GCP_SA_KEY_B64 }}
 
       - name: Build
         uses: docker/build-push-action@v2
