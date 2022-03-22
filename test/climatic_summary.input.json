@@ -1,5 +1,4 @@
 {
-  "data": "string",
   "date_time": "date",
   "station": "station_name",
   "elements": ["rain"],
