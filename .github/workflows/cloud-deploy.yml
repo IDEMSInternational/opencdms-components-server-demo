@@ -81,38 +81,8 @@ jobs:
           # https://githubhot.com/repo/docker/build-push-action/issues/554
           image: ${{ fromJSON(steps.build.outputs.Metadata)['image.name']}}
           region: ${{ env.REGION }}
+          # provide connection to production database
+          env_vars: DATABASE_URI=${{secrets.DATABASE_URI}}
 
       - name: Show Output
         run: echo ${{ steps.deploy.outputs.url }}
-
-      # - name: Login to DockerHub
-      #   uses: docker/login-action@v1
-      #   with:
-      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      # - name: Extract metadata (tags, labels) for Docker
-      #   id: meta
-      #   uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-      #   with:
-      #     images: idems/opencdms-components-api
-
-      # authenticate to google cloud
-      # https://github.com/google-github-actions/auth#authenticating-via-service-account-key-json
-      # https://cloud.google.com/artifact-registry/docs/access-control
-
-      # - id: "auth"
-      #   uses: "google-github-actions/auth@v0"
-      #   with:
-      #     credentials_json: ${{secrets.GCP_SA_KEY_B64}}
-      #     token_format: "access_token"
-
-      # - name: Authorize Docker push
-      #   run: gcloud auth configure-docker
-      # Authenticate to google cloud
-      # https://github.com/google-github-actions/auth#authenticating-via-service-account-key-json
-      # https://github.com/docker/login-action#google-container-registry-gcr
-
-      # This example runs "docker login" directly to Artifact Registry.
-      # - run: |
-      #     echo '${{ steps.auth.outputs.access_token }}' | docker login -u oauth2accesstoken --password-stdin https://${{env.REGION}}-docker.pkg.dev

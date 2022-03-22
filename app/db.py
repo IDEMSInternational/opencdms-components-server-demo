@@ -9,6 +9,9 @@ from dotenv import load_dotenv
 load_dotenv()
 DATABASE_URI = os.environ.get("DATABASE_URI")
 
+if not DATABASE_URI:
+    raise Exception("DATABASE_URI not provided in environment")
+
 engine: Engine = create_engine(DATABASE_URI)
 
 SessionLocal = sessionmaker(engine)
