@@ -6,11 +6,12 @@ name: cloud_deploy
 on:
   push:
     branches:
-      - feat/cloud-db-integration
+      - feat/deploy-gh-action
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
-  SERVICE: hello-cloud-run
-  REGION: us-central1
+  SERVICE: opencdms-components-api
+  REGION: europe-west1
+  IMAGE_NAME: gcr.io/${{ secrets.GCP_PROJECT_ID }}/opencdms-components-api
 
 jobs:
   deploy:
@@ -34,24 +35,22 @@ jobs:
         with:
           images: idems/opencdms-components-api
 
+      # authenticate to google cloud
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY_B64 | base64 --decode }}'          
+
       - name: Build
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: $IMAGE_NAME
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha, scope=${{ github.workflow }}
           cache-to: type=gha, scope=${{ github.workflow }}, mode=max
 
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v0'
-        with:
-          credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
-      - # copy multiplatform image from dockerhub to quay and ghcr
-        name: Push Image to multiple registries
-        uses: akhilerm/tag-push-action@v2.0.0
-        with:
-          src: ${{ steps.meta.outputs.tags[0] }}
-          dst: gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{  github.sha }}
+      - name: Deploy Docker image
+          run: gcloud run deploy ${{ secrets.GCP_PROJECT_ID }} --image $IMAGE_NAME --region us-central1 --platform managed
