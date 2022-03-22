@@ -9,7 +9,7 @@ env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   SERVICE: opencdms-components-api
   REGION: europe-west1
-  IMAGE_NAME: gcr.io/${{ secrets.GCP_PROJECT_ID }}/opencdms-components-api
+  IMAGE_NAME: gcr.io/${{ secrets.GCP_PROJECT }}/opencdms-components-api
 
 jobs:
   deploy:
