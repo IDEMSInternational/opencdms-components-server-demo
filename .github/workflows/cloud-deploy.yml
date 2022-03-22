@@ -48,10 +48,8 @@ jobs:
       #   #   project_id: ${{ env.PROJECT_ID }}
       #   #   service_account_key: ${{ secrets.GCP_SA_KEY_B64 }}
       #   #   export_default_credentials: true  # Set to true to authenticate the Cloud Run action
-
       # - name: Authorize Docker push
       #   run: gcloud auth configure-docker
-
       # Authenticate to google cloud
       # https://github.com/google-github-actions/auth#authenticating-via-service-account-key-json
       # https://github.com/docker/login-action#service-account-based-authentication
@@ -62,9 +60,9 @@ jobs:
           username: "oauth2accesstoken"
           password: "${{ steps.auth.outputs.access_token }}"
 
-       # This example runs "docker login" directly to Container Registry.
-    - run: |
-        echo '${{ steps.auth.outputs.access_token }}' | docker login -u oauth2accesstoken --password-stdin https://gcr.io
+        # This example runs "docker login" directly to Container Registry.
+      - run: |
+          echo '${{ steps.auth.outputs.access_token }}' | docker login -u oauth2accesstoken --password-stdin https://gcr.io
 
       - name: Build
         uses: docker/build-push-action@v2
