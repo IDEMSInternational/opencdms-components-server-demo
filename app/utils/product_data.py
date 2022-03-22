@@ -11,7 +11,7 @@ from app.api.products.schema import ProductDataParams
 
 
 WORKING_DIR = os.path.dirname(__file__)
-ROOT_DIR = Path(WORKING_DIR).parent
+ROOT_DIR = Path(WORKING_DIR).parent.parent
 MOCK_DATA_DIR = os.path.join(ROOT_DIR, "test")
 TMP_DIR = os.path.join(ROOT_DIR, "tmp")
 
