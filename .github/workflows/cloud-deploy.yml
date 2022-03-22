@@ -64,8 +64,7 @@ jobs:
         with:
           context: .
           push: true
-          tags:
-            - ${{env.REGION}}-docker.pkg.dev/${{env.IMAGE_NAME}}:${{  github.sha }}
+          tags: ${{env.REGION}}-docker.pkg.dev/${{env.IMAGE_NAME}}:${{  github.sha }}
           # labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha, scope=${{ github.workflow }}
           cache-to: type=gha, scope=${{ github.workflow }}, mode=max
@@ -77,3 +76,6 @@ jobs:
           service: ${{ env.SERVICE }}
           image: ${{ env.IMAGE_NAME }}:${{  github.sha }}
           region: ${{ env.REGION }}
+
+      - name: Show Output
+        run: echo ${{ steps.deploy.outputs.url }}
