@@ -1,9 +1,11 @@
 import os
 from pathlib import Path
-from pandas import DataFrame, read_csv
+from fastapi import Query
+from pandas import DataFrame, read_csv, read_sql
 from datetime import datetime
 from opencdms.models.climsoft import v4_1_1_core as climsoft
 from sqlalchemy.orm.session import Session
+from sqlalchemy.orm.query import Query as SqlQuery
 
 from app.api.products.schema import ProductDataParams
 
@@ -17,7 +19,9 @@ if not os.path.exists(TMP_DIR):
     os.mkdir(TMP_DIR)
 
 
-def generateProductData(data_params: ProductDataParams, db_session: Session) -> DataFrame:
+def generateProductData(
+    data_params: ProductDataParams, db_session: Session
+) -> DataFrame:
     # Run queries against climsoft Observation final table
     obs = climsoft.Observationfinal
 
@@ -27,15 +31,22 @@ def generateProductData(data_params: ProductDataParams, db_session: Session) -> 
 
     print(period_start_date, period_end_date)
 
-    data = (
+    """data = (
         db_session.query(obs)
         .filter(obs.recordedFrom.in_(data_params.station_ids))
         .filter(obs.obsDatetime.between(period_start_date, period_end_date))
         .filter(obs.describedBy.in_(data_params.elements))
         .all()
+    )"""
+    query: SqlQuery = (
+        db_session.query(obs)
+        .filter(obs.recordedFrom.in_(data_params.station_ids))
+        .filter(obs.obsDatetime.between(period_start_date, period_end_date))
+        .filter(obs.describedBy.in_(data_params.elements))
     )
 
-    return data
+    df: DataFrame = read_sql(query.statement, db_session.get_bind())
+    return df
 
 
 def generateProductDataFromCSV() -> DataFrame:
