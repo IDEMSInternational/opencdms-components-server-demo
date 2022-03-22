@@ -38,6 +38,7 @@ jobs:
         uses: "google-github-actions/auth@v0"
         with:
           credentials_json: ${{secrets.GCP_SA_KEY_B64}}
+          token_format: "access_token"
 
       # - name: Setup Cloud SDK
       #   uses: google-github-actions/setup-gcloud@v0
