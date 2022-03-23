@@ -13,6 +13,7 @@ from app.api.products.schema import ImageLinkResponse, ProductDataParams
 from app.db import get_session
 from app.utils.product_data import ROOT_DIR, generateProductData, generateProductDataFromCSV, MOCK_DATA_DIR
 from app.services.timeseries_plot import timeseries_plot_create
+from app.utils.response import get_file_link_response, get_file_response
 
 
 router = APIRouter()
@@ -37,32 +38,22 @@ def image_test() -> FileResponse:
         return FileResponse(outputPath)
 
 
-@ router.post("/image_test_buffer", response_class=FileResponse)
+@ router.post("/image_test_file", response_class=FileResponse)
 # Return an image as a FileResponse (buffer stream)
-def image_test_buffer() -> FileResponse:
-    # Use test csv data
+def image_test_file(request: Request) -> FileResponse:
     imgPath = os.path.join(MOCK_DATA_DIR, "inventory_plot.output.jpeg")
-    return FileResponse(imgPath)
+    return get_file_response(filepath=imgPath, request=request, option='file')
 
 
 @ router.post("/image_test_b64")
 # Return an image encoded in base64
-def image_test_b64() -> str:
+def image_test_base64(request: Request) -> str:
     imgPath = os.path.join(MOCK_DATA_DIR, "inventory_plot.output.jpeg")
-    with open(imgPath, 'rb') as f:
-        base64image = base64.b64encode(f.read())
-        return base64image
+    return get_file_response(filepath=imgPath, request=request, option='base64')
 
 
 @ router.post("/image_test_link", response_model=ImageLinkResponse)
 # Copy a test image to static output dir and return direct download link
 def image_test_b64(request: Request):
-    filename = "inventory_plot.output.jpeg"
-    inputPath = os.path.join(MOCK_DATA_DIR, filename)
-    outputPath = os.path.join(ROOT_DIR, 'outputs', filename)
-    shutil.copy(inputPath, outputPath)
-    url = request.url
-    link = f"{url.scheme}://{url.hostname}:{url.port}/outputs/{filename}"
-    res = ImageLinkResponse(link=link)
-    json_compatible_item_data = jsonable_encoder(res)
-    return JSONResponse(content=json_compatible_item_data)
+    imgPath = os.path.join(MOCK_DATA_DIR, "inventory_plot.output.jpeg")
+    return get_file_response(filepath=imgPath, request=request, option='link')

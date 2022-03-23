@@ -14,9 +14,10 @@ class Response(BaseSchema):
     status: str
 
 
-class FileResponseOptions(Enum):
+class FileResponseOption(Enum):
     file = 'file'
     base64 = 'base64'
+    link = 'link'
 
 
 class ProductDataParams(BaseModel):
@@ -26,4 +27,10 @@ class ProductDataParams(BaseModel):
 
 
 class ImageLinkResponse(BaseModel):
+    mimetype: str
     link: str
+
+
+class ImageB64Response(BaseModel):
+    mimetype: str
+    data: str
