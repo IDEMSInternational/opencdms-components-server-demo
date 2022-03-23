@@ -8,7 +8,7 @@ import uuid
 from fastapi import Request
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.encoders import jsonable_encoder
-from app.api.products.schema import FileResponseOption, ImageB64Response, ImageLinkResponse
+from app.api.products.schema import FileResponseType, ImageB64Response, ImageLinkResponse
 from app.utils.paths import OUTPUTS_DIR
 
 
@@ -38,13 +38,13 @@ def get_error_response(message: str, result: List[Any] = None):
 # or base64-encoded data
 
 
-def get_file_response(option: FileResponseOption, filepath: str, request: Request):
+def get_file_response(option: FileResponseType, filepath: str, request: Request):
     print('get file repsonse', option)
-    if(option.value == FileResponseOption.file.value):
+    if(option.value == FileResponseType.file.value):
         return FileResponse(filepath)
-    if(option.value == FileResponseOption.base64.value):
+    if(option.value == FileResponseType.base64.value):
         return get_file_b64_response(filepath)
-    if(option.value == FileResponseOption.link.value):
+    if(option.value == FileResponseType.link.value):
         return get_file_link_response(filepath, request)
 
 

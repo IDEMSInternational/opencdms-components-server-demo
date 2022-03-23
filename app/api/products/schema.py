@@ -14,7 +14,7 @@ class Response(BaseSchema):
     status: str
 
 
-class FileResponseOption(Enum):
+class FileResponseType(Enum):
     file = 'file'
     base64 = 'base64'
     link = 'link'
