@@ -1,6 +1,5 @@
 import os
-from pathlib import Path
-from fastapi import Query
+
 from pandas import DataFrame, read_csv, read_sql
 from datetime import datetime
 from opencdms.models.climsoft import v4_1_1_core as climsoft
@@ -8,15 +7,7 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.query import Query as SqlQuery
 
 from app.api.products.schema import ProductDataParams
-
-
-WORKING_DIR = os.path.dirname(__file__)
-ROOT_DIR = Path(WORKING_DIR).parent.parent
-MOCK_DATA_DIR = os.path.join(ROOT_DIR, "test")
-TMP_DIR = os.path.join(ROOT_DIR, "tmp")
-
-if not os.path.exists(TMP_DIR):
-    os.mkdir(TMP_DIR)
+from app.utils.paths import MOCK_DATA_DIR
 
 
 def generateProductData(

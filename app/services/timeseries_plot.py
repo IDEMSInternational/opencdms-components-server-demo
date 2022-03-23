@@ -1,7 +1,7 @@
 import os
 from pandas import DataFrame
 from app.api.products.timeseries_plot.schema import TimeseriesPlotParams
-from app.utils.product_data import TMP_DIR
+from app.utils.paths import TMP_DIR
 from rinstat import cdms_products
 
 

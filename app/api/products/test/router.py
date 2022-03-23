@@ -1,19 +1,14 @@
-
-import base64
 import json
 import os
-import shutil
-from types import SimpleNamespace
 from fastapi import APIRouter, Depends, Request
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse
 from pydantic import Json
 from sqlalchemy.orm.session import Session
-from app.api.products.schema import ImageLinkResponse, ProductDataParams
+from app.api.products.schema import FileResponseOption, ImageLinkResponse, ProductDataParams
 from app.db import get_session
-from app.utils.product_data import ROOT_DIR, generateProductData, generateProductDataFromCSV, MOCK_DATA_DIR
-from app.services.timeseries_plot import timeseries_plot_create
-from app.utils.response import get_file_link_response, get_file_response
+from app.utils.paths import MOCK_DATA_DIR
+from app.utils.product_data import generateProductData
+from app.utils.response import get_file_response
 
 
 router = APIRouter()
@@ -25,17 +20,12 @@ def test_data_api(data_params: ProductDataParams, db_session: Session = Depends(
     return json.loads(data.to_json(orient='records'))
 
 
-@ router.post("/image_test", response_class=FileResponse)
+@ router.post("/image_test")
 # Generate a timeseries_plot image and return as a FileResponse
-def image_test() -> FileResponse:
-    # Use test csv data
-    data = generateProductDataFromCSV()
-    # Use test timeseries_plot input data, mapping key-value pairs as tuple for function params
-    inputJson = os.path.join(MOCK_DATA_DIR, "timeseries_plot.input.json")
-    with open(inputJson) as f:
-        params = json.load(f, object_hook=lambda d: SimpleNamespace(**d))
-        outputPath = timeseries_plot_create(data, params)
-        return FileResponse(outputPath)
+def image_test(response_option: FileResponseOption, request: Request):
+    imgPath = os.path.join(MOCK_DATA_DIR, "inventory_plot.output.jpeg")
+    print('get image', imgPath, response_option.value)
+    return get_file_response(filepath=imgPath, request=request, option=response_option)
 
 
 @ router.post("/image_test_file", response_class=FileResponse)
