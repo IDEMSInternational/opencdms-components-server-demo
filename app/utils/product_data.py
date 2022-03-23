@@ -31,13 +31,6 @@ def generateProductData(
 
     print(period_start_date, period_end_date)
 
-    """data = (
-        db_session.query(obs)
-        .filter(obs.recordedFrom.in_(data_params.station_ids))
-        .filter(obs.obsDatetime.between(period_start_date, period_end_date))
-        .filter(obs.describedBy.in_(data_params.elements))
-        .all()
-    )"""
     query: SqlQuery = (
         db_session.query(obs)
         .filter(obs.recordedFrom.in_(data_params.station_ids))
