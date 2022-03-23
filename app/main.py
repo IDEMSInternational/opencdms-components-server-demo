@@ -5,6 +5,7 @@ import uvicorn
 
 # Routers
 from app.api.products.climatic_summary.router import router as climatic_summary_router
+from app.api.products.inventory_plot.router import router as inventory_plot_router
 from app.api.products.inventory_table.router import router as inventory_table_router
 from app.api.products.timeseries_plot.router import router as timeseries_plot_router
 from app.api.products.test.router import router as test_router
@@ -28,6 +29,9 @@ def get_app():
 
     app.include_router(climatic_summary_router,
                        prefix="/v1/products/climatic-summary", tags=["Climatic Summary"])
+
+    app.include_router(inventory_plot_router,
+                       prefix="/v1/products/inventory-plot", tags=["Inventory Plot"])
 
     app.include_router(inventory_table_router,
                        prefix="/v1/products/inventory-table", tags=["Inventory Table"])
