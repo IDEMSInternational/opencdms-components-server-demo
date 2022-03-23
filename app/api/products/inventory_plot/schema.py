@@ -4,9 +4,9 @@ from pydantic import BaseModel
 
 
 class InventoryPlotParams(BaseModel):
-    date_time: str
-    elements: str
-    station: str = None
+    date_time: str = 'obsDatetime'
+    elements: str = 'obsValue'
+    station: str = 'recordedFrom'
     year: str = None
     doy: str = None
     year_doy_plot: bool = False
@@ -37,7 +37,8 @@ class InventoryPlotParams(BaseModel):
     display_rain_days: bool = False
     rain: str = None
     rain_cats: Dict[str, list] = {
-        "breaks": [0, 0.85, 1e100], #TODO was '"breaks": [0, 0.85, float("inf")]' but JSON cannot represent infinity
+        # TODO was '"breaks": [0, 0.85, float("inf")]' but JSON cannot represent infinity
+        "breaks": [0, 0.85, 1e100],
         "labels": ["Dry", "Rain"],
         "key_colours": ["tan3", "blue"],
     }
