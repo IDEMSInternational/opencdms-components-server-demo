@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import uvicorn
 
 # Routers
@@ -36,6 +37,10 @@ def get_app():
 
     app.include_router(test_router,
                        prefix="/v0/products/test", tags=["Test Functions"])
+
+    # Static file hosting
+    app.mount("/outputs", StaticFiles(directory="outputs",
+              check_dir=True), name="outputs")
 
     return app
 
