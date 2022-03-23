@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.responses import FileResponse
 from pydantic import Json
 from sqlalchemy.orm.session import Session
-from app.api.products.schema import FileResponseOption, ImageLinkResponse, ProductDataParams
+from app.api.products.schema import FileResponseType, ImageLinkResponse, ProductDataParams
 from app.db import get_session
 from app.utils.paths import MOCK_DATA_DIR
 from app.utils.product_data import generateProductData
@@ -22,10 +22,9 @@ def test_data_api(data_params: ProductDataParams, db_session: Session = Depends(
 
 @ router.post("/image_test")
 # Generate a timeseries_plot image and return as a FileResponse
-def image_test(response_option: FileResponseOption, request: Request):
+def image_test(response_type: FileResponseType, request: Request):
     imgPath = os.path.join(MOCK_DATA_DIR, "inventory_plot.output.jpeg")
-    print('get image', imgPath, response_option.value)
-    return get_file_response(filepath=imgPath, request=request, option=response_option)
+    return get_file_response(filepath=imgPath, request=request, option=response_type)
 
 
 @ router.post("/image_test_file", response_class=FileResponse)
