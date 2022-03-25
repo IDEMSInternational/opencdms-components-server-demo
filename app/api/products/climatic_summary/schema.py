@@ -3,9 +3,9 @@ from pydantic import BaseModel
 
 
 class ClimaticSummaryParams(BaseModel):
-    date_time: str
-    station: str = None
-    elements: List = []
+    date_time: str = "obsDatetime"
+    station: str = "recordedFrom"
+    elements: List = ["obsValue"]
     year: str = None
     month: str = None
     dekad: str = None  # TODO add type
@@ -15,7 +15,11 @@ class ClimaticSummaryParams(BaseModel):
     doy: str = None
     doy_first: int = 1
     doy_last: int = 366
-    summaries: Dict = {"n": "dplyr::n"}
+    summaries: Dict = {
+        "mean": "mean",
+        "max": "max",
+        "min": "min"
+    }
     na_rm: bool = False
     na_prop: int = None
     na_n: int = None
