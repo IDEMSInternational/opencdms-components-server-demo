@@ -14,6 +14,11 @@ class Response(BaseSchema):
     status: str
 
 
+class DataFrameResponseType(Enum):
+    columns = 'columns'
+    records = 'records'
+
+
 class FileResponseType(Enum):
     file = 'file'
     base64 = 'base64'
