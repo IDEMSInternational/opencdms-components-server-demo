@@ -7,7 +7,7 @@ class FailedCreatingClimaticSummary(Exception):
     pass
 
 
-def climatic_summary_create(data: DataFrame, params: ClimaticSummaryParams) -> str:
+def climatic_summary_create(data: DataFrame, params: ClimaticSummaryParams) -> DataFrame:
 
     df = cdms_products.climatic_summary(
         data=data,
@@ -36,5 +36,4 @@ def climatic_summary_create(data: DataFrame, params: ClimaticSummaryParams) -> s
         names=params.names,
     )
 
-    df_json: str = df.to_json()
-    return df_json
+    return df

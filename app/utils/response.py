@@ -8,7 +8,8 @@ import uuid
 from fastapi import Request
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.encoders import jsonable_encoder
-from app.api.products.schema import FileResponseType, ImageB64Response, ImageLinkResponse
+from pandas import DataFrame
+from app.api.products.schema import DataFrameResponseType, FileResponseType, ImageB64Response, ImageLinkResponse
 from app.utils.paths import OUTPUTS_DIR
 
 
@@ -34,12 +35,20 @@ def get_error_response(message: str, result: List[Any] = None):
         "result": [] if result is None else result,
     }
 
+# Dataframe Repsonses
+
+
+def get_dataframe_response(option: DataFrameResponseType, dataframe: DataFrame,):
+    if(option.value == DataFrameResponseType.columns.value):
+        return dataframe.to_dict(orient='split')
+    if(option.value == DataFrameResponseType.records.value):
+        return dataframe.to_dict(orient='records')
+
 # File Responses - Provide different methods for returning files as File objects, links to download
 # or base64-encoded data
 
 
 def get_file_response(option: FileResponseType, filepath: str, request: Request):
-    print('get file repsonse', option)
     if(option.value == FileResponseType.file.value):
         return FileResponse(filepath)
     if(option.value == FileResponseType.base64.value):
@@ -52,7 +61,6 @@ def get_file_b64_response(filepath: str):
     with open(filepath, 'rb') as f:
         base64image = base64.b64encode(f.read())
         mimetype = mimetypes.MimeTypes().guess_type(filepath)[0]
-        print(mimetype)
         res = ImageB64Response(mimetype=mimetype, data=base64image)
         json_compatible_item_data = jsonable_encoder(res)
         return JSONResponse(content=json_compatible_item_data)

@@ -20,8 +20,6 @@ def generateProductData(
     period_start_date = datetime.strptime(data_params.period[0], "%Y-%m-%d")
     period_end_date = datetime.strptime(data_params.period[1], "%Y-%m-%d")
 
-    print(period_start_date, period_end_date)
-
     query: SqlQuery = (
         db_session.query(obs)
         .filter(obs.recordedFrom.in_(data_params.station_ids))
