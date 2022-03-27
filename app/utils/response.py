@@ -39,6 +39,7 @@ def get_error_response(message: str, result: List[Any] = None):
 
 
 def get_dataframe_response(option: DataFrameResponseType, dataframe: DataFrame,):
+    dataframe = dataframe.fillna('') # JSON cannot represent NaN values, so change to space
     if(option.value == DataFrameResponseType.columns.value):
         return dataframe.to_dict(orient='split')
     if(option.value == DataFrameResponseType.records.value):
